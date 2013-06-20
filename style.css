@@ -2,6 +2,9 @@
 	margin: 0;
 	padding: 0;
 	vertical-align: middle;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 body, canvas {
 	-webkit-touch-callout: none;
@@ -10,4 +13,28 @@ body, canvas {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+#infoArea {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 40%;
+	height: 20%;
+	opacity: 0.75;
+	-webkit-border-top-right-radius: 1em;
+	-moz-border-radius-topright: 1em;
+	border-top-right-radius: 1em;
+}
+#infoTitle {
+	width: 100%;
+	font-size: 2em;
+	padding-left: 4px;
+	-webkit-border-top-right-radius: 0.5em;
+	-moz-border-radius-topright: 0.5em;
+	border-top-right-radius: 0.5em;
+}
+#infoBody {
+	width: 100%;
+	padding-top: 6px;
+	padding-left: 6px;
 }

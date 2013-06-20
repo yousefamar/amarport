@@ -1,8 +1,10 @@
 {
 	"label": "root",
+	"desc": "Helloooooo!<br>How are <strong>you</strong> doing?<br><a href=\"http://www.google.com/\">Google</a> is a pretty cool website.",
 	"children": [
 		{
-			"label": "c1",
+			"label": "c1 - Blaa",
+			"desc": "Bla, bla, bla",
 			"children": []
 		},
 		{

@@ -1,5 +1,14 @@
 var AMARPORT = {};
 
+AMARPORT.cols = [
+	'#e8e4e3',
+	'#313b5e',
+	'#a1a4ab',
+	'#acc3d4',
+	'#666464',
+	'#d2d6d9'
+];
+
 AMARPORT.loadGraphSync = function (url) {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, false);
@@ -9,6 +18,7 @@ AMARPORT.loadGraphSync = function (url) {
 
 AMARPORT.Node = function (obj) {
 	this.label = obj.label || '';
+	this.desc = obj.desc || '';
 	this.children = [];
 	this.radius = 10;
 
@@ -67,7 +77,7 @@ AMARPORT.Node.prototype.render = function (ctx) {
 		ctx.beginPath();
 		ctx.moveTo(this.x, this.y);
 		ctx.lineTo(child.x, child.y);
-		ctx.strokeStyle = 'red';
+		ctx.strokeStyle = AMARPORT.cols[4];
 		//ctx.lineWidth = 1;
 		ctx.stroke();
 
@@ -76,20 +86,37 @@ AMARPORT.Node.prototype.render = function (ctx) {
 
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-	ctx.fillStyle = this.contains(ctx.mousePos.x, ctx.mousePos.y)?'yellow':'green';
+	ctx.fillStyle = this.contains(AMARPORT.mousePos.x, AMARPORT.mousePos.y)?AMARPORT.cols[5]:AMARPORT.cols[2];
 	ctx.fill();
+	if (this === AMARPORT.selected) {
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = AMARPORT.cols[1];
+		ctx.stroke();
+		ctx.lineWidth = 1;
+	}
 
-	ctx.fillStyle = 'white';
+	ctx.fillStyle = AMARPORT.cols[1];
 	ctx.fillText(this.label, this.x, this.y-this.radius-2);
-	ctx.fillStyle = 'cyan';
+	ctx.fillStyle = AMARPORT.cols[2];
 	ctx.fillText('('+this.x.toFixed(2)+', '+this.y.toFixed(2)+')', this.x, this.y+this.radius+12);
-	//ctx.lineWidth = 2;
-	ctx.strokeStyle = '#003300';
-	ctx.stroke();
 };
 
 
 AMARPORT.main = function () {
+	var infoArea = document.getElementById('infoArea');
+	infoArea.style.backgroundColor = AMARPORT.cols[0];
+	infoArea.style.webkitBoxShadow = '0 0 1em '+AMARPORT.cols[4];
+	infoArea.style.mozBoxShadow = '0 0 1em '+AMARPORT.cols[4];
+	infoArea.style.boxShadow = '0 0 1em '+AMARPORT.cols[4];
+
+	var infoTitle = document.getElementById('infoTitle');
+	infoTitle.style.backgroundColor = AMARPORT.cols[5];
+	infoTitle.style.borderBottom = '2px groove '+AMARPORT.cols[2];
+
+	var infoBody = document.getElementById('infoBody');
+	infoBody.style.backgroundColor = AMARPORT.cols[0];
+
+
 	var canvas = document.getElementById('canvas');
 	var ctx = AMARPORT.ctx = canvas.getContext('2d');
 
@@ -104,35 +131,39 @@ AMARPORT.main = function () {
 
 	var centerX = canvas.width/2, centerY = canvas.height/2;
 
-	var root = new AMARPORT.Node(AMARPORT.loadGraphSync('graph.json'));
+	function select (node) {
+		AMARPORT.selected = node;
+		infoTitle.innerHTML = node.label;
+		infoBody.innerHTML = node.desc;
+	}
 
-	ctx.mousePos = { x: 0, y: 0 };
+	var root = new AMARPORT.Node(AMARPORT.loadGraphSync('graph.json'));
+	select(root);
+
+	AMARPORT.mousePos = { x: 0, y: 0 };
 
 	var dragee = null;
 
-	canvas.addEventListener('mousedown', function (event) {
-		var mouseX = event.offsetX===undefined?event.layerX:event.offsetX;
-		var mouseY = event.offsetY===undefined?event.layerY:event.offsetY;
+	document.addEventListener('mousedown', function (event) {
 		root.forEachPre(function (node) {
-			if (node.contains(mouseX, mouseY)) {
+			if (node.contains(event.pageX, event.pageY)) {
+				select(node);
 				dragee = node;
 				return true;
 			}
 		});
 	}, false);
 
-	canvas.addEventListener('mousemove', function (event) {
-		var mouseX = event.offsetX===undefined?event.layerX:event.offsetX;
-		var mouseY = event.offsetY===undefined?event.layerY:event.offsetY;
-		ctx.mousePos.x = mouseX;
-		ctx.mousePos.y = mouseY;
+	document.addEventListener('mousemove', function (event) {
+		AMARPORT.mousePos.x = event.pageX;
+		AMARPORT.mousePos.y = event.pageY;
 		if (dragee) {
-			dragee.x = mouseX;
-			dragee.y = mouseY;
+			dragee.x = event.pageX;
+			dragee.y = event.pageY;
 		}
 	}, false);
 
-	canvas.addEventListener('mouseup', function (event) {
+	document.addEventListener('mouseup', function (event) {
 		dragee = null;
 	}, false);
 
@@ -163,15 +194,17 @@ AMARPORT.main = function () {
 	function render () {
 		requestAnimFrame(render);
 
-		ctx.fillStyle = 'black';
+		ctx.fillStyle = AMARPORT.cols[0];
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+		/*
 		ctx.beginPath();
-		ctx.moveTo(ctx.mousePos.x, ctx.mousePos.y);
-		ctx.lineTo(ctx.mousePos.x+1, ctx.mousePos.y+1);
+		ctx.moveTo(AMARPORT.mousePos.x, AMARPORT.mousePos.y);
+		ctx.lineTo(AMARPORT.mousePos.x+1, AMARPORT.mousePos.y+1);
 		ctx.strokeStyle = 'white';
 		//ctx.lineWidth = 1;
 		ctx.stroke();
+		*/
 
 		root.render(ctx);
 	}
