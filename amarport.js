@@ -19,6 +19,7 @@ AMARPORT.loadGraphSync = function (url) {
 AMARPORT.Node = function (obj) {
 	this.label = obj.label || '';
 	this.desc = obj.desc || '';
+	this.parent = null;
 	this.children = [];
 	this.radius = 10;
 
@@ -32,6 +33,7 @@ AMARPORT.Node = function (obj) {
 };
 
 AMARPORT.Node.prototype.addChild = function (child) {
+	child.parent = this;
 	this.children.push(child);
 	return this;
 };
@@ -40,7 +42,16 @@ AMARPORT.Node.prototype.forEachPre = function (func) {
 	if (func(this))
 		return true;
 	for (var i = 0, len = this.children.length; i < len; i++)
-		this.children[i].forEachPre(func);
+		if (this.children[i].forEachPre(func))
+			return true;
+};
+
+AMARPORT.Node.prototype.forEachPost = function (func) {
+	for (var i = 0, len = this.children.length; i < len; i++)
+		if (this.children[i].forEachPost(func))
+			return true;
+	if (func(this))
+		return true;
 };
 
 AMARPORT.Node.prototype.distTo = function (node) {
@@ -52,8 +63,8 @@ AMARPORT.Node.prototype.addForce = function (otherNode) {
 	var distX = (this.x - otherNode.x) || 0.0001, distY = (this.y - otherNode.y) || 0.0001;
 	var dirX = distX/dist, dirY = distY/dist;
 
-	this.netForce.x += 10000*dirX/(dist*dist);
-	this.netForce.y += 10000*dirY/(dist*dist);
+	this.netForce.x += 100*this.radius*otherNode.radius*dirX/(dist*dist);
+	this.netForce.y += 100*this.radius*otherNode.radius*dirY/(dist*dist);
 
 	if (this.children.indexOf(otherNode) >= 0) {
 		var force = 0.1 * (dist - 100);
@@ -86,8 +97,10 @@ AMARPORT.Node.prototype.render = function (ctx) {
 
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-	ctx.fillStyle = this.contains(AMARPORT.mousePos.x, AMARPORT.mousePos.y)?AMARPORT.cols[5]:AMARPORT.cols[2];
+	ctx.fillStyle = this.contains(AMARPORT.mousePos.x, AMARPORT.mousePos.y)?AMARPORT.cols[5]:this.children.length?AMARPORT.cols[2]:AMARPORT.cols[3];
 	ctx.fill();
+	if (this.parent === null)
+		ctx.drawImage(AMARPORT.me, this.x-AMARPORT.me.width/2, this.y-AMARPORT.me.height/2);
 	if (this === AMARPORT.selected) {
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = AMARPORT.cols[1];
@@ -95,10 +108,11 @@ AMARPORT.Node.prototype.render = function (ctx) {
 		ctx.lineWidth = 1;
 	}
 
+	ctx.textAlign = 'center';
 	ctx.fillStyle = AMARPORT.cols[1];
 	ctx.fillText(this.label, this.x, this.y-this.radius-2);
-	ctx.fillStyle = AMARPORT.cols[2];
-	ctx.fillText('('+this.x.toFixed(2)+', '+this.y.toFixed(2)+')', this.x, this.y+this.radius+12);
+	//ctx.fillStyle = AMARPORT.cols[2];
+	//ctx.fillText('('+this.x.toFixed(2)+', '+this.y.toFixed(2)+')', this.x, this.y+this.radius+12);
 };
 
 
@@ -129,7 +143,8 @@ AMARPORT.main = function () {
 	}, false);
 
 
-	var centerX = canvas.width/2, centerY = canvas.height/2;
+	AMARPORT.me = new Image(); 
+	AMARPORT.me.src = 'me-small.png';
 
 	function select (node) {
 		AMARPORT.selected = node;
@@ -138,6 +153,12 @@ AMARPORT.main = function () {
 	}
 
 	var root = new AMARPORT.Node(AMARPORT.loadGraphSync('graph.json'));
+	root.forEachPost(function (node) {
+		if (node.children.length)
+			return;
+		for (var current = node.parent; current; current = current.parent)
+			current.radius++;
+	});
 	select(root);
 
 	AMARPORT.mousePos = { x: 0, y: 0 };

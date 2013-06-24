@@ -1,63 +1,67 @@
 {
-	"label": "root",
-	"desc": "Helloooooo!<br>How are <strong>you</strong> doing?<br><a href=\"http://www.google.com/\">Google</a> is a pretty cool website.",
+	"label": "Yousef Amar",
+	"desc": "Welcome to AmarPort.com!<br>Above is a network of projects I have worked on over the years; a <i>port</i>folio if you will.<br>For more information on any project, click its (draggable) node.<br><br><a href=\"#\">Click here</a> for a PDF file of my CV.",
 	"children": [
 		{
-			"label": "c1 - Blaa",
-			"desc": "Bla, bla, bla",
-			"children": []
-		},
-		{
-			"label": "c2",
-			"children": []
-		},
-		{
-			"label": "c3",
+			"label": "Java",
 			"children": [
 				{
-					"label": "cc1",
+					"label": "OpenGL",
 					"children": []
 				},
 				{
-					"label": "cc2",
+					"label": "Non-OpenGL",
 					"children": []
-				},
+				}
+			]
+		},
+		{
+			"label": "Python",
+			"children": []
+		},
+		{
+			"label": "Web",
+			"desc": "This category contains web apps and anything web app related.",
+			"children": [
 				{
-					"label": "cc3",
-					"children": []
-				},
-				{
-					"label": "cc4",
+					"label": "Front End",
+					"desc": "Everything predominantly front end that can be seen on a webpage, including anything HTML5, CSS3, and JavaScript related can be found here.",
 					"children": [
 						{
-							"label": "ccc1",
+							"label": "2D Canvas",
 							"children": []
 						},
 						{
-							"label": "ccc2",
+							"label": "WebGL",
 							"children": []
 						},
 						{
-							"label": "ccc3",
+							"label": "WebSockets",
 							"children": []
 						},
 						{
-							"label": "ccc4",
+							"label": "Assorted JavaScript",
+							"children": []
+						}
+					]
+				},
+				{
+					"label": "Back End",
+					"desc": "Everything predominantly back end that runs out of sight on a server, including anything PHP and SQL related can be found here.",
+					"children": [
+						{
+							"label": "PHP/SQL",
 							"children": []
 						},
 						{
-							"label": "ccc5",
+							"label": "JavaScript",
 							"children": [
 								{
-									"label": "cccc1",
+									"label": "Node.js",
 									"children": []
 								},
 								{
-									"label": "cccc2",
-									"children": []
-								},
-								{
-									"label": "cccc3",
+									"label": "Miscellaneous",
 									"children": []
 								}
 							]
@@ -67,15 +71,45 @@
 			]
 		},
 		{
-			"label": "c4",
+			"label": "C++",
+			"children": [
+				{
+					"label": "OpenGL",
+					"children": []
+				},
+				{
+					"label": "Non-OpenGL",
+					"children": []
+				}
+			]
+		},
+		{
+			"label": "C",
+			"children": [
+				{
+					"label": "PC",
+					"children": []
+				},
+				{
+					"label": "Embedded Systems",
+					"children": []
+				}
+			]
+		},
+		{
+			"label": "VHDL",
 			"children": []
 		},
 		{
-			"label": "c5",
+			"label": "Assembly",
 			"children": []
 		},
 		{
-			"label": "c6",
+			"label": "MatLab",
+			"children": []
+		},
+		{
+			"label": "Arduino",
 			"children": []
 		}
 	]
