@@ -165,7 +165,7 @@ AMARPORT.main = function () {
 
 	var dragee = null;
 
-	document.addEventListener('mousedown', function (event) {
+	function down (event) {
 		root.forEachPre(function (node) {
 			if (node.contains(event.pageX, event.pageY)) {
 				select(node);
@@ -173,20 +173,27 @@ AMARPORT.main = function () {
 				return true;
 			}
 		});
-	}, false);
+	}
 
-	document.addEventListener('mousemove', function (event) {
+	function move (event) {
 		AMARPORT.mousePos.x = event.pageX;
 		AMARPORT.mousePos.y = event.pageY;
 		if (dragee) {
 			dragee.x = event.pageX;
 			dragee.y = event.pageY;
 		}
-	}, false);
+	}
 
-	document.addEventListener('mouseup', function (event) {
+	function up (event) {
 		dragee = null;
-	}, false);
+	}
+
+	document.addEventListener('mousedown', down, false);
+	document.addEventListener('touchstart', function (event) { event.preventDefault(); down(event.targetTouches[0]); }, false);
+	document.addEventListener('mousemove', move, false);
+	document.addEventListener('touchmove', function (event) { move(event.targetTouches[0]); }, false);
+	document.addEventListener('mouseup', up, false);
+	document.addEventListener('touchend', function (event) { up(event.targetTouches[0]); }, false);
 
 
 	const TICK_INTERVAL_MS = 1000.0/60.0;
